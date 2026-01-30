@@ -57,16 +57,18 @@ apply_basic_style_to_figure(fig)
 
 st.plotly_chart(fig)
 
-data['log_scaled_numVotes'] = np.log10(data['numVotes'])
 
 with st.form("my_form"):
     min_votes = st.number_input("How much votes should a movie have atleast to be included in the distribution?: ", min_value=1, max_value=1600000, value=1)
     max_votes = st.number_input("How much votes should a movie have atmost to be included in the distribution?: ", min_value=1, max_value=1600000, value=1000000)
     submitted = st.form_submit_button("Submit Values")
 
+required_df = data[(data['numVotes'] >= min_votes) & (data['numVotes'] <= max_votes)]
+required_df['log_scaled_numVotes'] = np.log10(required_df['numVotes'])
+
 num_votes_histogram = px.histogram(
-    data,
-    x=data['log_scaled_numVotes'],
+    required_df,
+    x=required_df['log_scaled_numVotes'],
     nbins = int(np.log10(max_votes)) - int(np.log10(min_votes)),
     title="Distribution of number of votes given to movies"
 )
