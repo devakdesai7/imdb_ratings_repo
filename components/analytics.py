@@ -29,13 +29,12 @@ def apply_basic_style_to_figure(fig):
 
     return fig
 
-def analytics():
+def analytics(data):
     st.markdown(
     "<h1 style='color:rgb(255, 47, 0); text-align:center; font-family:'Times New Roman';'>IMDb Ratings analysis for Movies that are publicly available</h1>",
     unsafe_allow_html=True
     )
-
-    data = pd.read_csv('dataset/imdb_ratings.csv')
+    st.divider()
 
     st.dataframe(data)
 
