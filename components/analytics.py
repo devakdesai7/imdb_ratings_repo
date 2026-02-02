@@ -129,5 +129,37 @@ def analytics(data):
 
         with col2:
             st.plotly_chart(significant_movies_rating_histogram, width='stretch')
+    
+    sorted_by_number_of_votes = data.sort_values(by='numVotes', ascending=False)
+    sorted_by_number_of_votes['cumulative_votes'] = sorted_by_number_of_votes['numVotes'].cumsum()
+    sorted_by_number_of_votes.index = np.arange(len(list(sorted_by_number_of_votes['title'])))
+    sorted_by_number_of_votes['movieNum'] = sorted_by_number_of_votes.index
+
+    totalVotes = sorted_by_number_of_votes['cumulative_votes'].iloc[-1]
+    totalMovies = sorted_by_number_of_votes['movieNum'].iloc[-1]
+
+    sorted_by_number_of_votes['percent_of_votes'] = (sorted_by_number_of_votes['cumulative_votes'] / totalVotes) * 100
+    sorted_by_number_of_votes['percent_of_movie'] = (sorted_by_number_of_votes['movieNum'] / totalMovies) * 100
+
+    with st.container(border=True):
+        st.text("The following line chart shows the line chart of cumulative votes the percentage of movies having less than the plotted movie's votes vs the movie's percentage when sorted in descending order")
+        line_chart_of_votes_dist = px.line(
+            sorted_by_number_of_votes,
+            x = 'percent_of_movie',
+            y = 'percent_of_votes',
+            title = "Plot of percentage of cumulative votes vs percentage of movie",
+            labels = {'percent_of_movie' : "Movie percentage",
+                      'percent_of_votes' : "Cumulative votes percentage"}
+        )
+
+        apply_basic_style_to_figure(line_chart_of_votes_dist)
+
+        columns1, columns2, columns3 = st.columns([0.5, 2, 0.5])
+
+        with columns2:
+            st.plotly_chart(line_chart_of_votes_dist)
+            st.text("The above chart shows that the top 7.5% movies by number of votes got the 90% of total votes people gave to movies in general, that's interesting")
+
+    
 
     
