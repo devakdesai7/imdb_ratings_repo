@@ -60,7 +60,10 @@ def analytics(data):
             fig.update_yaxes(title_text="Number of Movies")
             apply_basic_style_to_figure(fig)
 
-            st.plotly_chart(fig, use_container_width=True)
+            myCol1, myCol2, myCol3 = st.columns([0.1, 3, 0.1])
+
+            with myCol2:
+                st.plotly_chart(fig, use_container_width=True)
 
     with col2:
         with st.container(border=True): 
@@ -75,10 +78,12 @@ def analytics(data):
                 nbins = int(np.log10(max_votes)) - int(np.log10(min_votes)),
                 title="Distribution of number of votes given to movies"
             )
-
             apply_basic_style_to_figure(num_votes_histogram)
 
-            st.plotly_chart(num_votes_histogram, use_container_width=True)
+            column1, column2, column3 = st.columns([0.1, 3, 0.1])
+
+            with column2:
+                st.plotly_chart(num_votes_histogram, width='content')
 
     with st.container(border=True):
         scatterplot_of_ratings_votes = px.scatter(
@@ -90,7 +95,39 @@ def analytics(data):
         )
 
         apply_basic_style_to_figure(scatterplot_of_ratings_votes)
-        st.plotly_chart(scatterplot_of_ratings_votes, use_container_width=True)
+        cols1, cols2, cols3 = st.columns([0.5, 2, 0.5])
+        with cols2:
+            st.plotly_chart(scatterplot_of_ratings_votes, use_container_width=True)
+
         st.text(
             "The points having a higher number of votes along with a high rating are the box-office successes whereas the ones with high ratings and low number of votes are underrated gems and the ones with both of them low are box-office failures."
         )
+
+    significant_movies_df = data[data['numVotes'] > 10000]
+    
+
+    with st.container(border=True):
+        st.text("The following plot shows the plot of average ratings of movies having more than 10000 votes, this is necessary because there are many movies with very less votes that are flunking the data with no significance of their ratings at all.")
+
+        myCols1, myCols2, myCols3 = st.columns([0.5, 2, 0.5])
+
+        with myCols2:
+            min_significant_votes, max_significant_votes = st.slider("Select the rating range for which you want to see the plot", 0, 10, (0, 5))
+
+        required_significant_df = significant_movies_df[(significant_movies_df['averageRating'] >= min_significant_votes) & (significant_movies_df['averageRating'] <= max_significant_votes)]
+        
+        significant_movies_rating_histogram = px.histogram(
+            required_significant_df,
+            x = 'averageRating',
+            nbins = (int(max_significant_votes - min_significant_votes)) * 2,
+            labels={'averageRating' : 'Average Rating'},
+            title='Distribution of movies having more than 10000 votes on the basis of its average ratings')
+        
+        apply_basic_style_to_figure(significant_movies_rating_histogram)
+
+        col1, col2, col3 = st.columns([0.5, 2, 0.5])
+
+        with col2:
+            st.plotly_chart(significant_movies_rating_histogram, width='stretch')
+
+    
