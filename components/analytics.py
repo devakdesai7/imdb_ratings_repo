@@ -60,7 +60,7 @@ def analytics(data):
             fig.update_yaxes(title_text="Number of Movies")
             apply_basic_style_to_figure(fig)
 
-            st.plotly_chart(fig)
+            st.plotly_chart(fig, use_container_width=True)
 
     with col2:
         with st.container(border=True): 
@@ -78,4 +78,19 @@ def analytics(data):
 
             apply_basic_style_to_figure(num_votes_histogram)
 
-            st.plotly_chart(num_votes_histogram)
+            st.plotly_chart(num_votes_histogram, use_container_width=True)
+
+    with st.container(border=True):
+        scatterplot_of_ratings_votes = px.scatter(
+            data,
+            x=data['averageRating'],
+            y=data['numVotes'],
+            hover_name=data['title'],
+            title='Distribution of movies based on the number of votes it got and it\'s average rating',
+        )
+
+        apply_basic_style_to_figure(scatterplot_of_ratings_votes)
+        st.plotly_chart(scatterplot_of_ratings_votes, use_container_width=True)
+        st.text(
+            "The points having a higher number of votes along with a high rating are the box-office successes whereas the ones with high ratings and low number of votes are underrated gems and the ones with both of them low are box-office failures."
+        )

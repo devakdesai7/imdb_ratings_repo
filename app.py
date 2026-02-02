@@ -10,14 +10,20 @@ data = pd.read_csv('dataset/imdb_ratings.csv')
 
 data = data.drop('Unnamed: 0', axis='columns')
 
+if 'page' not in st.session_state:
+    st.session_state.page = 'Home'
+
 page = st.sidebar.selectbox(
     "☰ Navigation",
-    ['Home', 'Analytics', 'About']
+    ['Home', 'Analytics', 'About'],
+    index=['Home', 'Analytics', 'About'].index(st.session_state.page)
 )
 
-if page == 'Analytics':
+st.session_state.page = page
+
+if st.session_state.page == 'Analytics':
     analytics(data)
-elif page == 'Home':
+elif st.session_state.page == 'Home':
     home(data)
 
 
